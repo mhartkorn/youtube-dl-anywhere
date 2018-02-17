@@ -1,39 +1,43 @@
-from bottle import redirect, error, route, run, request, abort
+#!/usr/bin/env python3
+
+from bottle import redirect, request, abort, Bottle
 
 import youtube_dl
 
-HOST = '0.0.0.0'
-PORT = 5000
+DEBUG_HOST = '0.0.0.0'
+DEBUG_PORT = 5000
 DEFAULT_FORMAT = '(mp4,webm)[height<=720]'
 
+app = application = Bottle()
 
-@route('/v/<raw_url:path>')
+
+@app.route('/v/<raw_url:path>')
 def raw(raw_url: str):
     url = combine_url_query(raw_url, request.query.decode())
 
     return find_url(DEFAULT_FORMAT, url)
 
 
-@route('/f/<fmt>/<raw_url:path>')
+@app.route('/f/<fmt>/<raw_url:path>')
 def with_format(fmt: str, raw_url: str):
     url = combine_url_query(raw_url, request.query.decode())
 
     return find_url(fmt, url)
 
 
-@route('/')
+@app.route('/')
 def index():
     return ""
 
 
-@error(500)
+@app.error(500)
 def server_error(error):
     return "An internal error has occurred."
 
 
-@error(404)
+@app.error(404)
 def server_error(error):
-    return "Not found: {}".format(error[1])
+    return "Not found: {}".format(error)
 
 
 def find_url(fmt: str, url: str):
@@ -42,6 +46,7 @@ def find_url(fmt: str, url: str):
         'format': fmt,
         'cachedir': False,
         'logger': None,
+        'noplaylist': True,
     }
 
     # Add http protocol if none is given for website
@@ -79,7 +84,7 @@ def combine_url_query(url, args):
 
 
 def main():
-    run(host=HOST, port=PORT)
+    app.run(host=DEBUG_HOST, port=DEBUG_PORT)
 
 
 if __name__ == '__main__':
