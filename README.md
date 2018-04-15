@@ -1,4 +1,4 @@
-# Youtube-dl Everywhere
+# Youtube-dl Anywhere
 
 Youtube-dl Everywhere lets you play videos from popular websites on any device with a network-capable video player.
 The only thing you need to run this application is a server with Python 3.
